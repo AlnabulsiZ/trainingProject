@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from werkzeug.security import generate_password_hash
 from tables import get_db  
 
-
 rou = APIRouter()
 
 class ForgotPasswordRequest(BaseModel):
@@ -18,7 +17,7 @@ class ResetPasswordRequest(BaseModel):
     new_password: str
 
 def generate_reset_code():
-    s=''
+    s = ''
     return s.join(random.choices(string.digits, k=4)) 
 
 def send_reset_email(email: str, reset_code: str):
@@ -46,7 +45,7 @@ def forgot_password(data: ForgotPasswordRequest):
     user = cr.fetchone()
 
     if not user:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Email not found in our records")
     
     reset_code = generate_reset_code()
     cr.execute("UPDATE users SET reset_code = ? WHERE email = ?", (reset_code, data.email))
@@ -67,12 +66,15 @@ def reset_password(data: ResetPasswordRequest):
     user = cr.fetchone()
 
     if not user or user[0] != data.reset_code:
-        raise HTTPException(status_code=400, detail="Wrong reset code")
+        raise HTTPException(status_code=400, detail="Invalid reset code")
     
-    new=data.new_password
+    
+    new = data.new_password
     hashed_password = generate_password_hash(new)
-    cr.execute("UPDATE users SET password = ?, reset_code = NULL WHERE email = ?",(hashed_password, data.email))
-    cr.commit()
+    
+    
+    cr.execute("UPDATE users SET password = ?, reset_code = NULL WHERE email = ?", (hashed_password, data.email))
+    db.commit()
     db.close()
 
     return {"message": "Password reset successfully", "status": "success"}
