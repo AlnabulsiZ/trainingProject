@@ -181,7 +181,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                       SizedBox(height: 20),
                       TextField(controller: _confirmPasswordController, decoration: InputDecoration(labelText: 'Confirm New Password', filled: true, fillColor: AppColors.blueC, border: OutlineInputBorder(borderRadius: BorderRadius.circular(40), borderSide: BorderSide.none)), obscureText: true),
                       SizedBox(height: 20),
-                      isLoading ? CircularProgressIndicator() : ElevatedButton(onPressed: sendResetPasswordRequest, child: Text('Reset Password'), style: ElevatedButton.styleFrom(backgroundColor: AppColors.brownC)),
+                      isLoading ? CircularProgressIndicator() : ElevatedButton(onPressed: sendResetPasswordRequest, child: Text('Reset Password',style: TextStyle(color: AppColors.backC),), style: ElevatedButton.styleFrom(backgroundColor: AppColors.brownC)),
+
                     ],
                   ],
                 ),
