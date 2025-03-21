@@ -154,9 +154,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           child: Column(
             children: [
               const SizedBox(height: 150),
-              Text('Reset Password', style: TextStyle(color: AppColors.blueC, fontSize: 35)),
+              Text('Reset Password', style: TextStyle(color: AppColors.blueC, fontSize: 35,fontFamily: 'RadioCanadaBig',)),
               const SizedBox(height: 15),
-              Text('Enter email and reset code', style: TextStyle(color: AppColors.brownC, fontSize: 15)),
+              Text('Enter email and reset code', style: TextStyle(color: AppColors.brownC, fontSize: 15,fontFamily: 'RadioCanadaBig',)),
+              const SizedBox(height: 25),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 child: Column(
@@ -165,7 +166,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                     SizedBox(height: 20),
                     isLoading ? CircularProgressIndicator(): ElevatedButton(
                       onPressed: isLoading ? null : sendForgotPasswordRequest, 
-                      child: Text('Send Reset Code'),
+                      child: Text('Send Reset Code',style: TextStyle(color: AppColors.backC),),
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.brownC),
                     ),
                     
@@ -182,7 +183,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                       TextField(controller: _confirmPasswordController, decoration: InputDecoration(labelText: 'Confirm New Password', filled: true, fillColor: AppColors.blueC, border: OutlineInputBorder(borderRadius: BorderRadius.circular(40), borderSide: BorderSide.none)), obscureText: true),
                       SizedBox(height: 20),
                       isLoading ? CircularProgressIndicator() : ElevatedButton(onPressed: sendResetPasswordRequest, child: Text('Reset Password',style: TextStyle(color: AppColors.backC),), style: ElevatedButton.styleFrom(backgroundColor: AppColors.brownC)),
-
                     ],
                   ],
                 ),
