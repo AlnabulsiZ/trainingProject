@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tasheha_app/Theme/colors.dart';
 import 'package:tasheha_app/pages/welcome.dart';
+import 'package:tasheha_app/pages/home.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -9,6 +12,29 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+  Future<void> checkLoginStatus() async {
+  final prefs = await SharedPreferences.getInstance();
+  bool? isLoggedIn = prefs.getBool('isLoggedIn');
+  if (isLoggedIn == null || !isLoggedIn) {
+    Timer(Duration(seconds: 4), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) =>  Welcome()),
+      );
+    });
+
+  } else {
+    Timer(Duration(seconds: 4), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) =>  Home()),
+      );
+    });
+
+  }
+ }
+
 
   @override
   void initState() {
