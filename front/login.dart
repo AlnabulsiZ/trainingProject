@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:tasheha_app/pages/register_option.dart';
 import 'package:tasheha_app/pages/forget_password_page.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,13 +16,18 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController _emailcontroller = TextEditingController();
   TextEditingController _passwordcontroller = TextEditingController();
+  bool isLoggedIn = false;
 
-  //controllers
+  Future<void> saveUserLoginStatus(bool isLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
   Future<void> _loginFunction() async {
     final email = _emailcontroller.text;
     final password = _passwordcontroller.text;
 
-    final url = Uri.parse('http://127.0.0.1:5000/login');
+    final url = Uri.parse('http://127.0.0.1:8000/login');
 
     final response = await http.post(
       url,
@@ -35,6 +40,9 @@ class _LoginState extends State<Login> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(responseData['message'])));
+      setState(() {
+        isLoggedIn = true;});
+      await saveUserLoginStatus(isLoggedIn);
     } else {
       ScaffoldMessenger.of(
         context,
@@ -55,8 +63,6 @@ class _LoginState extends State<Login> {
       MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
     );
   }
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -151,8 +157,8 @@ class _LoginState extends State<Login> {
               Divider(color: AppColors.blueC, thickness: 1, height: 40),
               const SizedBox(height: 20),
 
-                  SizedBox(width: 20),
-              
+              SizedBox(width: 20),
+
               const SizedBox(height: 30),
               Text('you don\'t have an account'),
               const SizedBox(height: 20),
