@@ -66,6 +66,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
     setState(() => isLoading = false); 
   }
 
+
+
   Future<void> checkResetCode() async {
     final resetCode = _resetCodeController.text;
 
@@ -94,6 +96,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200 && responseData['status'] == 'success') {
+
         setState(() => isPasswordFieldsVisible = true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Verification code is correct.')),
@@ -108,8 +111,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         SnackBar(content: Text('There is a problem, please try again')),
       );
     }
-
-    setState(() => isLoading = false);
+      setState(() => isLoading = false);
   }
 
   Future<void> sendResetPasswordRequest() async {
@@ -136,10 +138,12 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       _resetCodeController.clear();
       _newPasswordController.clear();
       _confirmPasswordController.clear();
+
       setState(() {
         isResetCodeVisible = false;
         isPasswordFieldsVisible = false;
       });
+      
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There is a problem, please try again')));
     }
