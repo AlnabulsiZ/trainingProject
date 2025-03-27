@@ -7,14 +7,17 @@ from typing import List
 
 app = FastAPI()
 
+## TODO you defined this function twice , define it once in a helper file and call it wherever you need 
 def get_db():
     db = sqlite3.connect("Tasheh.db")
     db.row_factory = sqlite3.Row #(convert row to dictionary)
     return db
 
+## TODO: Don't over enginer the code, you dont need such function
 def hash_password(password: str) -> str: # (-> str:) hint return type
     return generate_password_hash(password)
 
+## TODO: same here, don't over enginer
 def verify_password(password: str, hashed_password: str) -> bool:
     return check_password_hash(hashed_password, password)
 

@@ -14,3 +14,7 @@ However, here are some basic notes to help with scaling the project:
 - **You can add a `.gitignore` file** to improve version control by ignoring unnecessary files.
 
 The rest of the notes will be added directly to the code in the PR.
+
+---
+
+## Lets discuss Tokens for the login and how to know the user through the session
