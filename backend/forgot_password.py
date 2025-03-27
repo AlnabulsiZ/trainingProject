@@ -60,6 +60,7 @@ def forgot_password(data: ForgotPasswordRequest):
 @rou.post("/reset_password")
 def reset_password(data: ResetPasswordRequest):
     db = get_db()
+    ## TODO :: more informative names
     cr = db.cursor()    
 
     cr.execute("SELECT reset_code FROM users WHERE email = ?", (data.email,))
