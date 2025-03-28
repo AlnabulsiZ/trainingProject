@@ -1,0 +1,27 @@
+# Flutter files
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+
+# Flutter files => IDE
+.idea/
+.vscode/
+
+# Python & FastAPI files 
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+
+# VE => Python
+venv/
+env/
+
+
+*.log
+
+
+.env
