@@ -60,7 +60,7 @@ def forgot_password(data: ForgotPasswordRequest):
 @rou.post("/reset_password")
 def reset_password(data: ResetPasswordRequest):
     db = get_db()
-    ## TODO :: more informative names
+    ## TODO :: more informative names ==> Done
     cr = db.cursor()    
 
     cr.execute("SELECT reset_code FROM users WHERE email = ?", (data.email,))
@@ -70,8 +70,8 @@ def reset_password(data: ResetPasswordRequest):
         raise HTTPException(status_code=400, detail="Invalid reset code")
     
     
-    new = data.new_password
-    hashed_password = generate_password_hash(new)
+    new_password = data.new_password
+    hashed_password = generate_password_hash(new_password)
     
     
     cr.execute("UPDATE users SET password = ?, reset_code = NULL WHERE email = ?", (hashed_password, data.email))
