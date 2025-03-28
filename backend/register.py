@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from pydantic import BaseModel, EmailStr, constr
+from helper import get_db 
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,19 +8,12 @@ from typing import List
 
 app = FastAPI()
 
-## TODO you defined this function twice , define it once in a helper file and call it wherever you need 
-def get_db():
-    db = sqlite3.connect("Tasheh.db")
-    db.row_factory = sqlite3.Row #(convert row to dictionary)
-    return db
+## TODO you defined this function twice , define it once in a helper file and call it wherever you need ==> Done
+get_db()
 
-## TODO: Don't over enginer the code, you dont need such function
-def hash_password(password: str) -> str: # (-> str:) hint return type
-    return generate_password_hash(password)
+## TODO: Don't over enginer the code, you dont need such function ==> Done
+## TODO: same here, don't over enginer ==> Done
 
-## TODO: same here, don't over enginer
-def verify_password(password: str, hashed_password: str) -> bool:
-    return check_password_hash(hashed_password, password)
 
 class UserRegister(BaseModel):
     Fname: str
@@ -49,7 +43,7 @@ def register_user(user: UserRegister):
     cr = db.cursor()
     try:
         cr.execute("INSERT INTO users (Fname, Lname, email, password) VALUES (?, ?, ?, ?)",
-                   (user.Fname, user.Lname, user.email, hash_password(user.password)))
+                   (user.Fname, user.Lname, user.email, generate_password_hash(user.password)))
         db.commit()
         return {"message": "User registered successfully"}
     except sqlite3.IntegrityError:
@@ -69,7 +63,7 @@ async def register_owner(owner: OwnerRegister, images: List[UploadFile] = File(.
     try:
        
         cr.execute("INSERT INTO owners (Fname, Lname, email, phone, password) VALUES (?, ?, ?, ?, ?)",
-                   (owner.Fname, owner.Lname, owner.email, owner.phone, hash_password(owner.password)))
+                   (owner.Fname, owner.Lname, owner.email, owner.phone, generate_password_hash(owner.password)))
         owner_id = cr.lastrowid
         
         cr.execute("INSERT INTO places (name, city, type, description) VALUES (?, ?, ?, ?)",
@@ -112,10 +106,11 @@ async def register_guide(guide: GuideRegister, image: UploadFile = File(...)):
             INSERT INTO guides (Fname, Lname, email, phone, national_id, personal_image, password, gender, age, image_path)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (guide.Fname, guide.Lname, guide.email, guide.phone, guide.national_id,
-              guide.personal_image, hash_password(guide.password), guide.gender, guide.age, image_path))
+              guide.personal_image, generate_password_hash(guide.password), guide.gender, guide.age, image_path))
         db.commit()
         return {"message": "Guide registered successfully"}
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=400, detail="Email or Phone already exists")
     finally:
+        db.close()
         db.close()
