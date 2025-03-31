@@ -50,6 +50,15 @@ def create_tables():
             gender TEXT NOT NULL,
             age INTEGER NOT NULL    
         );
+        CREATE TABLE IF NOT EXISTS favorites(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            place_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
+            UNIQUE(user_id, place_id)
+        );
     ''')
     db.commit()
     db.close()
