@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tasheha_app/services/auth_service.dart';
 import 'package:tasheha_app/Theme/colors.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:tasheha_app/pages/register_option.dart';
 import 'package:tasheha_app/pages/forget_password_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,81 +13,62 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final _formKey = GlobalKey<FormState>(); // => Input validation
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isLoggedIn = false;
 
-  Future<void> _saveUserLogin(bool isLoggedIn) async {
-
-    final pre= await SharedPreferences.getInstance();
-    await pre.setBool('isLoggedIn', isLoggedIn);
-
-  }
-
-  Future<void> _loginFunction() async {
-    if (!_formKey.currentState!.validate()) return; //as stop button 
-    setState(() => _isLoading = true);
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
     
+    setState(() => _isLoading = true);
+
     try {
-      final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': _emailController.text.trim(),
-          'password': _passwordController.text,
-        }),
+      final response = await AuthService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
 
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-
-        _showSnackBar(responseData['message'] ?? 'Login successful'); 
-        setState(() => _isLoggedIn = true);
-        await _saveUserLogin(_isLoggedIn);
-      } 
-      else {
+        final data = json.decode(response.body);
+        await AuthService.saveToken(data['access_token']);
+        _showSnackBar('Login successful');
+      } else {
         final error = json.decode(response.body)['error'] ?? 'Login failed';
         _showSnackBar(error, isError: true);
       }
-    }
-     on http.ClientException // => If Server Down
-      catch (e) {
-      _showSnackBar('Error: ${e.message}', isError: true);
-    } 
-    catch (e) {
+    } catch (e) {
       _showSnackBar('Error: ${e.toString()}', isError: true);
-    } 
-    finally {
+    } finally {
       setState(() => _isLoading = false);
     }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: isError ? AppColors.blueC : AppColors.brownC,
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
-  void _goToRegisterPage() {
+  void _navigateToRegister() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const RegisterOption()),
     );
   }
 
-  void _goToforgetPasswordPage() {
+  void _navigateToForgotPassword() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ForgetPasswordPage()),
     );
   }
+
+
+
 
   @override
   void dispose() {
@@ -97,7 +77,7 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -192,7 +172,7 @@ class _LoginState extends State<Login> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: _goToforgetPasswordPage,
+                          onPressed: _navigateToForgotPassword,
                           child: Text(
                             'Forgot Password?',
                             style: TextStyle(color: AppColors.blueC),
@@ -203,7 +183,7 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _loginFunction,
+                          onPressed: _isLoading ? null :  _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.brownC,
                             foregroundColor: Colors.white,
@@ -218,20 +198,20 @@ class _LoginState extends State<Login> {
                               : const Text('Login'),
                         ),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                       Divider(
                         color: AppColors.blueC,
                         thickness: 1,
                         height: 1,
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 15),
                       Text(
                         'Don\'t have an account?',
                         style: TextStyle(color: AppColors.brownC),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 5),
                       TextButton(
-                        onPressed: _goToRegisterPage,
+                        onPressed: _navigateToRegister,
                         child: Text(
                           'Sign up',
                           style: TextStyle(
